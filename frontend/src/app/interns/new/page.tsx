@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, FormEvent, ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
+import { saveToken } from "@/lib/auth";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
@@ -11,6 +13,8 @@ type FormState = {
   university: string;
   graduationYear: string;
   skills: string;
+  password: string;
+  passwordConfirmation: string;
 };
 
 const initialForm: FormState = {
@@ -19,13 +23,15 @@ const initialForm: FormState = {
   university: "",
   graduationYear: "",
   skills: "",
+  password: "",
+  passwordConfirmation: "",
 };
 
 export default function NewInternPage() {
+  const router = useRouter();
   const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [registered, setRegistered] = useState(false);
 
   const handleChange =
     (field: keyof FormState) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -50,17 +56,20 @@ export default function NewInternPage() {
               ? Number(form.graduationYear)
               : null,
             skills: form.skills,
+            password: form.password,
+            password_confirmation: form.passwordConfirmation,
           },
         }),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
-        setForm(initialForm);
-        setRegistered(true);
+        saveToken(data.token);
+        router.push("/mypage");
         return;
       }
 
-      const data = await res.json();
       setErrors(data.errors ?? ["登録に失敗しました"]);
     } catch {
       setErrors(["サーバーに接続できませんでした"]);
@@ -68,17 +77,6 @@ export default function NewInternPage() {
       setSubmitting(false);
     }
   };
-
-  if (registered) {
-    return (
-      <main>
-        <h1>登録が完了しました</h1>
-        <button type="button" onClick={() => setRegistered(false)}>
-          続けて登録する
-        </button>
-      </main>
-    );
-  }
 
   return (
     <main>
@@ -124,6 +122,28 @@ export default function NewInternPage() {
           <label>
             スキル
             <input value={form.skills} onChange={handleChange("skills")} />
+          </label>
+        </div>
+        <div>
+          <label>
+            パスワード
+            <input
+              type="password"
+              value={form.password}
+              onChange={handleChange("password")}
+              required
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            パスワード(確認用)
+            <input
+              type="password"
+              value={form.passwordConfirmation}
+              onChange={handleChange("passwordConfirmation")}
+              required
+            />
           </label>
         </div>
 

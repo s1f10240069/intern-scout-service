@@ -7,6 +7,9 @@ export default function Home() {
       <p>
         <Link href="/interns/new">インターン生登録</Link>
       </p>
+      <p>
+        <Link href="/login">ログイン</Link>
+      </p>
     </main>
   );
 }

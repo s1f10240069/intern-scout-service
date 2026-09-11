@@ -1,0 +1,7 @@
+{
+  "name": "intern-scout-service",
+  "private": true,
+  "scripts": {
+    "dev": "docker compose up --build"
+  }
+}

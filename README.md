@@ -12,20 +12,23 @@
 
 前提: Docker Desktop がインストール済みであること。
 
+初回のみDB作成が必要です。
+
 ```bash
 docker compose build
 docker compose up -d
 docker compose exec backend bin/rails db:create db:migrate
+docker compose down
+```
+
+以降は以下で起動・停止できます(フォアグラウンドで実行され、Ctrl+Cで停止すればコンテナも一緒に止まります)。
+
+```bash
+npm run dev
 ```
 
 - フロントエンド: http://localhost:3001
 - バックエンドAPI: http://localhost:3000
-
-停止する場合:
-
-```bash
-docker compose down
-```
 
 ## ディレクトリ構成
 
