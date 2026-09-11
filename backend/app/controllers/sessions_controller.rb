@@ -21,7 +21,6 @@ class SessionsController < ApplicationController
   private
 
   def current_intern
-    token = request.headers["Authorization"]&.delete_prefix("Bearer ")
-    Intern.find_by(api_token: token) if token.present?
+    Intern.find_by(api_token: bearer_token) if bearer_token.present?
   end
 end

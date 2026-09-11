@@ -1,4 +1,6 @@
 class InternsController < ApplicationController
+  before_action :authenticate_company!, only: [ :index, :show ]
+
   def index
     interns = Intern.all
     render json: interns

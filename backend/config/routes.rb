@@ -10,6 +10,11 @@ Rails.application.routes.draw do
   post "login", to: "sessions#create"
   get "me", to: "sessions#show"
 
+  resources :companies, only: [ :create ]
+
+  post "company_login", to: "company_sessions#create"
+  get "company_me", to: "company_sessions#show"
+
   # Defines the root path route ("/")
   # root "posts#index"
 end
