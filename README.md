@@ -27,8 +27,8 @@ docker compose down
 npm run dev
 ```
 
-- フロントエンド: http://localhost:3001
-- バックエンドAPI: http://localhost:3000
+- フロントエンド: http://localhost:3000
+- バックエンドAPI: http://localhost:3001
 
 ## ディレクトリ構成
 
