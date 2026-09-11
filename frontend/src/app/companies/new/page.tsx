@@ -8,9 +8,6 @@ import { API_BASE_URL } from "@/lib/api";
 type FormState = {
   name: string;
   email: string;
-  university: string;
-  graduationYear: string;
-  skills: string;
   password: string;
   passwordConfirmation: string;
 };
@@ -18,14 +15,11 @@ type FormState = {
 const initialForm: FormState = {
   name: "",
   email: "",
-  university: "",
-  graduationYear: "",
-  skills: "",
   password: "",
   passwordConfirmation: "",
 };
 
-export default function NewInternPage() {
+export default function NewCompanyPage() {
   const router = useRouter();
   const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<string[]>([]);
@@ -42,18 +36,13 @@ export default function NewInternPage() {
     setErrors([]);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/interns`, {
+      const res = await fetch(`${API_BASE_URL}/companies`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          intern: {
+          company: {
             name: form.name,
             email: form.email,
-            university: form.university,
-            graduation_year: form.graduationYear
-              ? Number(form.graduationYear)
-              : null,
-            skills: form.skills,
             password: form.password,
             password_confirmation: form.passwordConfirmation,
           },
@@ -63,8 +52,8 @@ export default function NewInternPage() {
       const data = await res.json();
 
       if (res.ok) {
-        saveToken("intern", data.token);
-        router.push("/mypage");
+        saveToken("company", data.token);
+        router.push("/companies/dashboard");
         return;
       }
 
@@ -78,11 +67,11 @@ export default function NewInternPage() {
 
   return (
     <main>
-      <h1>インターン生登録</h1>
+      <h1>企業登録</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label>
-            名前
+            会社名
             <input value={form.name} onChange={handleChange("name")} required />
           </label>
         </div>
@@ -95,31 +84,6 @@ export default function NewInternPage() {
               onChange={handleChange("email")}
               required
             />
-          </label>
-        </div>
-        <div>
-          <label>
-            大学・学部
-            <input
-              value={form.university}
-              onChange={handleChange("university")}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            卒業予定年
-            <input
-              type="number"
-              value={form.graduationYear}
-              onChange={handleChange("graduationYear")}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            スキル
-            <input value={form.skills} onChange={handleChange("skills")} />
           </label>
         </div>
         <div>

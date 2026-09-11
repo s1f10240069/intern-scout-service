@@ -17,9 +17,11 @@
 ```bash
 docker compose build
 docker compose up -d
-docker compose exec backend bin/rails db:create db:migrate
+docker compose exec backend bin/rails db:create db:migrate db:seed
 docker compose down
 ```
+
+`db:seed` でテスト用のダミーアカウントが作成されます(詳細は [docs/PROGRESS.md](docs/PROGRESS.md) 参照、パスワードは全て `password123`)。
 
 以降は以下で起動・停止できます(フォアグラウンドで実行され、Ctrl+Cで停止すればコンテナも一緒に止まります)。
 

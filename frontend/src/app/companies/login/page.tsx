@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { saveToken } from "@/lib/auth";
 import { API_BASE_URL } from "@/lib/api";
 
-export default function LoginPage() {
+export default function CompanyLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +18,7 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/login`, {
+      const res = await fetch(`${API_BASE_URL}/company_login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -27,8 +27,8 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        saveToken("intern", data.token);
-        router.push("/mypage");
+        saveToken("company", data.token);
+        router.push("/companies/dashboard");
         return;
       }
 
@@ -42,7 +42,7 @@ export default function LoginPage() {
 
   return (
     <main>
-      <h1>ログイン</h1>
+      <h1>企業ログイン</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label>

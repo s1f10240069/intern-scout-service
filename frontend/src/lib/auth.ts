@@ -1,14 +1,18 @@
-const TOKEN_KEY = "internApiToken";
+export type AuthKind = "intern" | "company";
 
-export function saveToken(token: string) {
-  localStorage.setItem(TOKEN_KEY, token);
+function tokenKey(kind: AuthKind) {
+  return kind === "intern" ? "internApiToken" : "companyApiToken";
 }
 
-export function getToken(): string | null {
+export function saveToken(kind: AuthKind, token: string) {
+  localStorage.setItem(tokenKey(kind), token);
+}
+
+export function getToken(kind: AuthKind): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(tokenKey(kind));
 }
 
-export function clearToken() {
-  localStorage.removeItem(TOKEN_KEY);
+export function clearToken(kind: AuthKind) {
+  localStorage.removeItem(tokenKey(kind));
 }

@@ -3,9 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getToken, clearToken } from "@/lib/auth";
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3000";
+import { API_BASE_URL } from "@/lib/api";
 
 type Intern = {
   id: number;
@@ -22,7 +20,7 @@ export default function MyPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = getToken();
+    const token = getToken("intern");
 
     if (!token) {
       router.push("/login");
@@ -38,14 +36,14 @@ export default function MyPage() {
       })
       .then((data) => setIntern(data))
       .catch(() => {
-        clearToken();
+        clearToken("intern");
         router.push("/login");
       })
       .finally(() => setLoading(false));
   }, [router]);
 
   const handleLogout = () => {
-    clearToken();
+    clearToken("intern");
     router.push("/login");
   };
 
