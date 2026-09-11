@@ -7,6 +7,9 @@ Rails.application.routes.draw do
 
   resources :interns, only: [ :index, :show, :create ]
 
+  post "login", to: "sessions#create"
+  get "me", to: "sessions#show"
+
   # Defines the root path route ("/")
   # root "posts#index"
 end
