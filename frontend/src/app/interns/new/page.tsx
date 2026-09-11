@@ -3,7 +3,7 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { saveToken } from "@/lib/auth";
-import { API_BASE_URL } from "@/lib/api";
+import { apiFetch, ApiError } from "@/lib/api";
 
 type FormState = {
   name: string;
@@ -42,10 +42,9 @@ export default function NewInternPage() {
     setErrors([]);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/interns`, {
+      const data = await apiFetch<{ token: string }>("/interns", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           intern: {
             name: form.name,
             email: form.email,
@@ -57,20 +56,18 @@ export default function NewInternPage() {
             password: form.password,
             password_confirmation: form.passwordConfirmation,
           },
-        }),
+        },
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        saveToken("intern", data.token);
-        router.push("/mypage");
-        return;
+      saveToken("intern", data.token);
+      router.push("/mypage");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const errors = (err.data as { errors?: string[] })?.errors;
+        setErrors(errors ?? ["登録に失敗しました"]);
+      } else {
+        setErrors(["サーバーに接続できませんでした"]);
       }
-
-      setErrors(data.errors ?? ["登録に失敗しました"]);
-    } catch {
-      setErrors(["サーバーに接続できませんでした"]);
     } finally {
       setSubmitting(false);
     }

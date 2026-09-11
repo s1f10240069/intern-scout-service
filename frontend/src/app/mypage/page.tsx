@@ -1,46 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getToken, clearToken } from "@/lib/auth";
-import { API_BASE_URL } from "@/lib/api";
-
-type Intern = {
-  id: number;
-  name: string;
-  email: string;
-  university: string | null;
-  graduation_year: number | null;
-  skills: string | null;
-};
+import { clearToken } from "@/lib/auth";
+import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource";
+import type { Intern } from "@/lib/types";
 
 export default function MyPage() {
   const router = useRouter();
-  const [intern, setIntern] = useState<Intern | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = getToken("intern");
-
-    if (!token) {
-      router.push("/login");
-      return;
-    }
-
-    fetch(`${API_BASE_URL}/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("unauthorized");
-        return res.json();
-      })
-      .then((data) => setIntern(data))
-      .catch(() => {
-        clearToken("intern");
-        router.push("/login");
-      })
-      .finally(() => setLoading(false));
-  }, [router]);
+  const { data: intern, loading, error } = useAuthenticatedResource<Intern>(
+    "intern",
+    "/me",
+    "/login"
+  );
 
   const handleLogout = () => {
     clearToken("intern");
@@ -48,6 +19,7 @@ export default function MyPage() {
   };
 
   if (loading) return <main>読み込み中...</main>;
+  if (error) return <main>{error}</main>;
   if (!intern) return null;
 
   return (

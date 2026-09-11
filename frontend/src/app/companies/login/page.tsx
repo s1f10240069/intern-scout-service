@@ -3,7 +3,7 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { saveToken } from "@/lib/auth";
-import { API_BASE_URL } from "@/lib/api";
+import { apiFetch, ApiError } from "@/lib/api";
 
 export default function CompanyLoginPage() {
   const router = useRouter();
@@ -18,23 +18,20 @@ export default function CompanyLoginPage() {
     setError(null);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/company_login`, {
+      const data = await apiFetch<{ token: string }>("/company_login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: { email, password },
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        saveToken("company", data.token);
-        router.push("/companies/dashboard");
-        return;
+      saveToken("company", data.token);
+      router.push("/companies/dashboard");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        const message = (err.data as { error?: string })?.error;
+        setError(message ?? "ログインに失敗しました");
+      } else {
+        setError("サーバーに接続できませんでした");
       }
-
-      setError(data.error ?? "ログインに失敗しました");
-    } catch {
-      setError("サーバーに接続できませんでした");
     } finally {
       setSubmitting(false);
     }

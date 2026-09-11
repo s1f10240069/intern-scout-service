@@ -43,9 +43,43 @@
 - 画面: `/companies/new`(登録) / `/companies/login` / `/companies/dashboard`(インターン生一覧)
 - `GET /interns`・`GET /interns/:id` は企業ログイン必須(インターン生のトークンではアクセスできない)
 
+## フロントエンドの構成方針(決定事項)
+
+- 各ページ(`page.tsx`)には画面固有のUIだけを書き、共通処理は別ファイルに切り出す
+  - `lib/api.ts`: `apiFetch()` — fetch + JSONパース + Authorizationヘッダー付与 + エラー時は`ApiError`をthrow、という共通処理
+  - `lib/auth.ts`: `localStorage`へのトークン保存・取得・削除(`intern`/`company`で保存先を分離)
+  - `lib/types.ts`: `Intern`/`Company`など複数ページで使う型
+  - `hooks/useAuthenticatedResource.ts`: 「トークン確認→APIから自分専用のデータ取得→失敗ならログイン画面へ」という`/mypage`と`/companies/dashboard`で共通のロジックをまとめたカスタムフック
+- 入力欄(`<label><input/></label>`)そのものの共通コンポーネント化はまだしていない。フォームごとに項目が異なり、今の規模では無理に共通化すると複雑になるため
+
+## 次の設計:会話(メッセージ)機能
+
+要件2「企業がインターン生にメッセージを送れる」は、一方通行の送信ではなく**双方向のやり取り(会話)**として設計する。
+
+- `Conversation`: 企業とインターン生の1対1の組み合わせで1つ。最初のメッセージ送信時に自動作成
+- `Message`: `Conversation`に属し、どちらが送ったか(`sender_type`)と本文を持つ
+
+画面遷移(案):
+
+```
+[企業側]
+/companies/dashboard(一覧)
+ └─ インターン生をクリック → /companies/interns/:id
+      (プロフィール + そのインターン生との会話スレッド + 返信フォーム。
+       まだ会話がなければ最初のメッセージ送信で会話が始まる)
+
+/companies/messages(会話一覧)
+ └─ クリック → /companies/messages/:conversation_id(スレッド)
+
+[インターン生側]
+/mypage
+ └─ 「メッセージ」リンク → /messages(会話一覧)
+      → クリック → /messages/:conversation_id(スレッド、返信フォームあり)
+```
+
 ## 未着手(要件2以降)
 
-- 企業→インターン生へのメッセージ機能 ← 次に着手
+- 企業→インターン生への会話(メッセージ)機能 ← 次に着手
 - (余裕があれば)企業の募集掲載機能
 - インターン生向けの検索・企業一覧などの機能(将来的に)
 

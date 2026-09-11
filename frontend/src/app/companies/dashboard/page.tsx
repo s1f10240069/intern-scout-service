@@ -1,46 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getToken, clearToken } from "@/lib/auth";
-import { API_BASE_URL } from "@/lib/api";
-
-type Intern = {
-  id: number;
-  name: string;
-  email: string;
-  university: string | null;
-  graduation_year: number | null;
-  skills: string | null;
-};
+import { clearToken } from "@/lib/auth";
+import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource";
+import type { Intern } from "@/lib/types";
 
 export default function CompanyDashboardPage() {
   const router = useRouter();
-  const [interns, setInterns] = useState<Intern[] | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = getToken("company");
-
-    if (!token) {
-      router.push("/companies/login");
-      return;
-    }
-
-    fetch(`${API_BASE_URL}/interns`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("unauthorized");
-        return res.json();
-      })
-      .then((data) => setInterns(data))
-      .catch(() => {
-        clearToken("company");
-        router.push("/companies/login");
-      })
-      .finally(() => setLoading(false));
-  }, [router]);
+  const { data: interns, loading, error } = useAuthenticatedResource<Intern[]>(
+    "company",
+    "/interns",
+    "/companies/login"
+  );
 
   const handleLogout = () => {
     clearToken("company");
@@ -48,6 +19,7 @@ export default function CompanyDashboardPage() {
   };
 
   if (loading) return <main>読み込み中...</main>;
+  if (error) return <main>{error}</main>;
   if (!interns) return null;
 
   return (
