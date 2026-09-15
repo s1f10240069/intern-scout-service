@@ -23,7 +23,7 @@ export default function LoginPage() {
         body: { email, password },
       });
 
-      saveToken("intern", data.token);
+      saveToken("student", data.token);
       router.push("/mypage");
     } catch (err) {
       if (err instanceof ApiError) {

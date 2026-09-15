@@ -3,39 +3,39 @@
 import { useRouter } from "next/navigation";
 import { clearToken } from "@/lib/auth";
 import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource";
-import type { Intern } from "@/lib/types";
+import type { Student } from "@/lib/types";
 
 export default function MyPage() {
   const router = useRouter();
-  const { data: intern, loading, error } = useAuthenticatedResource<Intern>(
-    "intern",
+  const { data: student, loading, error } = useAuthenticatedResource<Student>(
+    "student",
     "/me",
     "/login"
   );
 
   const handleLogout = () => {
-    clearToken("intern");
+    clearToken("student");
     router.push("/login");
   };
 
   if (loading) return <main>読み込み中...</main>;
   if (error) return <main>{error}</main>;
-  if (!intern) return null;
+  if (!student) return null;
 
   return (
     <main>
       <h1>マイページ</h1>
       <dl>
         <dt>名前</dt>
-        <dd>{intern.name}</dd>
+        <dd>{student.name}</dd>
         <dt>メールアドレス</dt>
-        <dd>{intern.email}</dd>
+        <dd>{student.email}</dd>
         <dt>大学・学部</dt>
-        <dd>{intern.university}</dd>
+        <dd>{student.university}</dd>
         <dt>卒業予定年</dt>
-        <dd>{intern.graduation_year}</dd>
+        <dd>{student.graduation_year}</dd>
         <dt>スキル</dt>
-        <dd>{intern.skills}</dd>
+        <dd>{student.skills}</dd>
       </dl>
       <button type="button" onClick={handleLogout}>
         ログアウト

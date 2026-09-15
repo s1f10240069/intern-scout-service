@@ -9,6 +9,10 @@ class ApplicationController < ActionController::API
     Company.find_by(api_token: bearer_token) if bearer_token.present?
   end
 
+  def current_student
+    Student.find_by(api_token: bearer_token) if bearer_token.present?
+  end
+
   def authenticate_company!
     return if current_company
 

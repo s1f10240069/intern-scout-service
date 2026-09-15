@@ -3,11 +3,11 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main>
-      <h1>インターン生スカウトサービス</h1>
+      <h1>学生スカウトサービス</h1>
       <section>
-        <h2>インターン生の方</h2>
+        <h2>学生の方</h2>
         <p>
-          <Link href="/interns/new">インターン生登録</Link>
+          <Link href="/interns/new">学生登録</Link>
         </p>
         <p>
           <Link href="/login">ログイン</Link>

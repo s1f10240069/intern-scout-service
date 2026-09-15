@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "インターン生スカウトサービス",
-  description: "企業とインターン生をつなぐスカウトサービス",
+  title: "学生スカウトサービス",
+  description: "企業と学生をつなぐスカウトサービス",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -49,7 +49,7 @@ export default function NewCompanyPage() {
       });
 
       saveToken("company", data.token);
-      router.push("/companies/dashboard");
+      router.push("/company/students");
     } catch (err) {
       if (err instanceof ApiError) {
         const errors = (err.data as { errors?: string[] })?.errors;

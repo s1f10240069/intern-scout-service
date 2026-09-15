@@ -8,13 +8,13 @@ DUMMY_PASSWORD = "password123"
   { name: "山田太郎", email: "intern1@example.com", university: "○○大学 情報学部", graduation_year: 2027, skills: "Ruby, React" },
   { name: "佐藤花子", email: "intern2@example.com", university: "○○大学 経済学部", graduation_year: 2028, skills: "Python, SQL" }
 ].each do |attrs|
-  Intern.find_or_create_by!(email: attrs[:email]) do |intern|
-    intern.name = attrs[:name]
-    intern.university = attrs[:university]
-    intern.graduation_year = attrs[:graduation_year]
-    intern.skills = attrs[:skills]
-    intern.password = DUMMY_PASSWORD
-    intern.password_confirmation = DUMMY_PASSWORD
+  Student.find_or_create_by!(email: attrs[:email]) do |student|
+    student.name = attrs[:name]
+    student.university = attrs[:university]
+    student.graduation_year = attrs[:graduation_year]
+    student.skills = attrs[:skills]
+    student.password = DUMMY_PASSWORD
+    student.password_confirmation = DUMMY_PASSWORD
   end
 end
 

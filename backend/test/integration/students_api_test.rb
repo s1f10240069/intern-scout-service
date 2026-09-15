@@ -1,0 +1,68 @@
+require "test_helper"
+
+class StudentsApiTest < ActionDispatch::IntegrationTest
+  STUDENT_ATTRIBUTES = {
+    name: "移行テスト学生",
+    email: "migration-student@example.com",
+    university: "テスト大学",
+    graduation_year: 2028,
+    skills: "Ruby",
+    password: "password123",
+    password_confirmation: "password123"
+  }.freeze
+
+  test "creates a student through the new endpoint" do
+    assert_difference("Student.count", 1) do
+      post "/students", params: { student: STUDENT_ATTRIBUTES }, as: :json
+    end
+
+    assert_response :created
+    body = response.parsed_body
+    assert_equal "移行テスト学生", body.dig("student", "name")
+    assert body["token"].present?
+    assert_not body["student"].key?("password_digest")
+    assert_not body["student"].key?("api_token")
+  end
+
+  test "keeps the legacy interns endpoint compatible" do
+    attributes = STUDENT_ATTRIBUTES.merge(email: "legacy-intern@example.com")
+
+    assert_difference("Student.count", 1) do
+      post "/interns", params: { intern: attributes }, as: :json
+    end
+
+    assert_response :created
+    assert_equal "移行テスト学生", response.parsed_body.dig("intern", "name")
+  end
+
+  test "requires a company token to list students" do
+    get "/students", as: :json
+    assert_response :unauthorized
+
+    company = Company.create!(
+      name: "テスト企業",
+      email: "student-list-company@example.com",
+      password: "password123",
+      password_confirmation: "password123"
+    )
+    company.regenerate_api_token!
+
+    get "/students", headers: { "Authorization" => "Bearer #{company.api_token}" }, as: :json
+    assert_response :success
+  end
+
+  test "logs in a student after the table rename" do
+    Student.create!(STUDENT_ATTRIBUTES)
+
+    post "/login", params: {
+      email: STUDENT_ATTRIBUTES[:email],
+      password: STUDENT_ATTRIBUTES[:password]
+    }, as: :json
+
+    assert_response :success
+    body = response.parsed_body
+    assert_equal "移行テスト学生", body.dig("student", "name")
+    assert_equal body["student"], body["intern"]
+    assert body["token"].present?
+  end
+end

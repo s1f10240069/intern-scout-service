@@ -25,7 +25,7 @@ const initialForm: FormState = {
   passwordConfirmation: "",
 };
 
-export default function NewInternPage() {
+export default function NewStudentPage() {
   const router = useRouter();
   const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<string[]>([]);
@@ -42,10 +42,10 @@ export default function NewInternPage() {
     setErrors([]);
 
     try {
-      const data = await apiFetch<{ token: string }>("/interns", {
+      const data = await apiFetch<{ token: string }>("/students", {
         method: "POST",
         body: {
-          intern: {
+          student: {
             name: form.name,
             email: form.email,
             university: form.university,
@@ -59,7 +59,7 @@ export default function NewInternPage() {
         },
       });
 
-      saveToken("intern", data.token);
+      saveToken("student", data.token);
       router.push("/mypage");
     } catch (err) {
       if (err instanceof ApiError) {
@@ -75,7 +75,7 @@ export default function NewInternPage() {
 
   return (
     <main>
-      <h1>インターン生登録</h1>
+      <h1>学生登録</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label>

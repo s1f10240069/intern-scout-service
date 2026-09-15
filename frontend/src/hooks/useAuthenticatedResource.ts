@@ -9,7 +9,7 @@ import { ApiError, apiFetch } from "@/lib/api";
 // Reads the stored token for `kind`, fetches `endpoint` with it, and
 // redirects to `loginPath` if there's no token or the API rejects it
 // (expired/invalid token). Used by any page that only authenticated
-// interns/companies may see (mypage, dashboard, message threads, ...).
+// students/companies may see (mypage, student list, message threads, ...).
 export function useAuthenticatedResource<T>(
   kind: AuthKind,
   endpoint: string,

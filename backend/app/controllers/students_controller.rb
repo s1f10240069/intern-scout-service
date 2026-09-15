@@ -1,4 +1,4 @@
-class InternsController < ApplicationController
+class StudentsController < ApplicationController
   before_action :authenticate_company!, only: [ :index, :show ]
 
   def index
@@ -12,11 +12,11 @@ class InternsController < ApplicationController
   end
 
   def create
-    student = Student.new(intern_params)
+    student = Student.new(student_params)
 
     if student.save
       student.regenerate_api_token!
-      render json: { intern: student, token: student.api_token }, status: :created
+      render json: { student: student, token: student.api_token }, status: :created
     else
       render json: { errors: student.errors.full_messages }, status: :unprocessable_entity
     end
@@ -24,8 +24,8 @@ class InternsController < ApplicationController
 
   private
 
-  def intern_params
-    params.require(:intern).permit(
+  def student_params
+    params.require(:student).permit(
       :name, :email, :university, :graduation_year, :skills,
       :password, :password_confirmation
     )

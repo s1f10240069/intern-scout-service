@@ -24,7 +24,7 @@ export default function CompanyLoginPage() {
       });
 
       saveToken("company", data.token);
-      router.push("/companies/dashboard");
+      router.push("/company/students");
     } catch (err) {
       if (err instanceof ApiError) {
         const message = (err.data as { error?: string })?.error;
