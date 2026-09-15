@@ -11,12 +11,12 @@ export default function CompanyStudentsPage() {
   const { data: students, loading, error } = useAuthenticatedResource<Student[]>(
     "company",
     "/students",
-    "/companies/login"
+    "/login?account_type=company"
   );
 
   const handleLogout = () => {
     clearToken("company");
-    router.push("/companies/login");
+    router.push("/login?account_type=company");
   };
 
   if (loading) return <main>読み込み中...</main>;

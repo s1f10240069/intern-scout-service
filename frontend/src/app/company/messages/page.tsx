@@ -8,7 +8,7 @@ export default function CompanyMessagesPage() {
   const { data: conversations, loading, error } = useAuthenticatedResource<Conversation[]>(
     "company",
     "/company/messages",
-    "/companies/login"
+    "/login?account_type=company"
   );
 
   if (loading) return <main>読み込み中...</main>;

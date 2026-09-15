@@ -35,13 +35,16 @@
 - 登録API: `POST /students`、ログインAPI: `POST /login`、本人確認API: `GET /me`
 - 旧 `/interns` APIは移行期間中の互換ルートとして維持
 - 認証方式: `has_secure_password` でパスワードをハッシュ化して保存 + ログインごとにAPIトークンを再発行
-- 画面: `/interns/new`(登録、登録後は自動ログインしてマイページへ) / `/login` / `/mypage`
+- 画面: `/register`(学生を選択して登録、登録後は自動ログイン) / `/login`(学生を選択) / `/mypage`
+- 旧 `/interns/new` は `/register?account_type=student` へリダイレクト
 
 ### 企業側
 
 - `Company` モデル(name, email)。認証方式は学生と同じパターン
-- 登録API: `POST /companies`、ログインAPI: `POST /company_login`、本人確認API: `GET /company_me`
-- 画面: `/companies/new`(登録) / `/companies/login` / `/company/students`(学生一覧)
+- 登録API: `POST /companies`、ログインAPI: `POST /login`(`account_type: company`)、本人確認API: `GET /company_me`
+- 旧 `POST /company_login` は移行期間中の互換APIとして維持
+- 画面: `/register`(企業を選択) / `/login`(企業を選択) / `/company/students`(学生一覧)
+- 旧 `/companies/new`・`/companies/login` は統合画面へリダイレクト
 - 旧 `/companies/dashboard` は `/company/students` へリダイレクト
 - `GET /students`・`GET /students/:id` は企業ログイン必須(学生のトークンではアクセスできない)
 
@@ -58,7 +61,7 @@
 
 要件2「企業が学生にメッセージを送れる」は、一方通行の送信ではなく**双方向のやり取り(会話)**として設計する。
 
-`Intern` → `Student` と `/companies/dashboard` → `/company/students` の最小限の移行、およびメッセージ機能の実装は完了した。新旧ルートの互換処理は一時的に維持し、次は統合ログイン / 登録へ進む。
+名称・パス移行、メッセージ機能、統合ログイン / 登録は完了した。新旧ルートの互換処理は一時的に維持し、次は企業の募集掲載機能へ進む。
 
 - `Conversation`: 企業と学生の1対1の組み合わせで1つ。最初のメッセージ送信時に自動作成
 - `Message`: `Conversation`に属し、どちらが送ったか(`sender_type`)と本文を持つ
@@ -86,8 +89,7 @@
 
 ## 未着手（優先度順）
 
-- 統合ログイン / 登録 ← 次に着手
-- 企業の募集掲載機能
+- 企業の募集掲載機能 ← 次に着手
 - 学生向けの検索・企業一覧などの機能（将来的に）
 
 ## 技術的な決定・メモ

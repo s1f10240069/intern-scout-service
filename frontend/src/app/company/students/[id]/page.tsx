@@ -24,7 +24,7 @@ export default function CompanyStudentDetailPage() {
   useEffect(() => {
     const token = getToken("company");
     if (!token) {
-      router.replace("/companies/login");
+      router.replace("/login?account_type=company");
       return;
     }
 
@@ -33,7 +33,7 @@ export default function CompanyStudentDetailPage() {
       .catch((err: unknown) => {
         if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
           clearToken("company");
-          router.replace("/companies/login");
+          router.replace("/login?account_type=company");
           return;
         }
         setError("学生情報を取得できませんでした。");
@@ -59,7 +59,7 @@ export default function CompanyStudentDetailPage() {
     } catch (err) {
       if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
         clearToken("company");
-        router.replace("/companies/login");
+        router.replace("/login?account_type=company");
         throw new Error("ログインし直してください。");
       }
       if (err instanceof ApiError && err.status === 422) {

@@ -1,10 +1,19 @@
 class SessionsController < ApplicationController
-  def create
-    student = Student.authenticate_by(email: params[:email], password: params[:password])
+  ACCOUNT_TYPES = %w[student company].freeze
 
-    if student
-      student.regenerate_api_token!
-      render json: { student: student, intern: student, token: student.api_token }
+  def create
+    account_type = params[:account_type].presence || "student"
+    unless ACCOUNT_TYPES.include?(account_type)
+      render json: { error: "アカウント種別が正しくありません" }, status: :unprocessable_entity
+      return
+    end
+
+    account_class = account_type == "company" ? Company : Student
+    account = account_class.authenticate_by(email: params[:email], password: params[:password])
+
+    if account
+      account.regenerate_api_token!
+      render json: login_payload(account_type, account)
     else
       render json: { error: "メールアドレスまたはパスワードが正しくありません" }, status: :unauthorized
     end
@@ -16,5 +25,13 @@ class SessionsController < ApplicationController
     else
       render json: { error: "認証が必要です" }, status: :unauthorized
     end
+  end
+
+  private
+
+  def login_payload(account_type, account)
+    payload = { account_type: account_type, token: account.api_token, account_type.to_sym => account }
+    payload[:intern] = account if account_type == "student"
+    payload
   end
 end

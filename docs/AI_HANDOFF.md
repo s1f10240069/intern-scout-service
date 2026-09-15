@@ -21,10 +21,11 @@ Rails APIとNext.jsで作る、学生と企業をつなぐスカウトサービ�
   - モデル: `Student`（`students` テーブル）
   - API: `POST /students`、`POST /login`、`GET /me`
   - 互換API: `POST/GET /interns` は移行期間のみ維持
-  - 画面: `/interns/new`、`/login`、`/mypage`
+  - 画面: `/register`（学生選択）、`/login`（学生選択）、`/mypage`
 - 企業の登録、ログイン、学生一覧
-  - API: `POST /companies`、`POST /company_login`、`GET /company_me`
-  - 画面: `/companies/new`、`/companies/login`、`/company/students`
+  - API: `POST /companies`、`POST /login`（`account_type: company`）、`GET /company_me`
+  - 互換API: `POST /company_login` は移行期間のみ維持
+  - 画面: `/register`（企業選択）、`/login`（企業選択）、`/company/students`
   - 旧 `/companies/dashboard` は新パスへリダイレクト
 - 認証
   - `has_secure_password`でパスワードをハッシュ化
@@ -42,16 +43,18 @@ Rails APIとNext.jsで作る、学生と企業をつなぐスカウトサービ�
   - 学生: `/messages` から会話一覧・返信
   - `(company_id, student_id)` の一意制約、当事者認可、送信者のサーバー側決定、本文制約を実装済み
   - Rails統合テストで新旧学生APIとメッセージAPIを検証
+- 統合ログイン / 登録
+  - `/login` と `/register` で学生・企業を選択
+  - 旧 `/interns/new`、`/companies/new`、`/companies/login` は新画面へリダイレクト
 
 ### 未着手
 
-- 統合ログイン / 登録
 - 優先度3: 企業の募集掲載機能
 - 優先度4以降: 学生向け検索・企業一覧など
 
 ## 次に実装する機能と順序
 
-メッセージ前の名称・パス移行と、企業・学生間のメッセージ機能は完了した。旧API、旧画面リダイレクト、旧トークンキーの読込互換は移行期間中のみ残している。次は `/login` と `/register` へログイン・登録画面を統合する。
+名称・パス移行、メッセージ機能、統合ログイン / 登録は完了した。旧API、旧画面リダイレクト、旧トークンキーの読込互換は移行期間中のみ残している。次は企業の求人掲載機能へ進む。
 
 メッセージは一方通行の送信だけでなく、双方向の会話として実装する方針。
 
@@ -101,6 +104,6 @@ npm run dev
 - ローカルRuby/Railsを前提にせず、Docker Composeで動作確認する。レビュー者が追加セットアップなしで実行できることを重視している。
 - `backend/Gemfile`の`json` gemは`~> 2.7`に固定する。3.0系ではRailsのJSONリクエスト解析が失敗した経緯があるため、安易に更新しない。
 - APIが401または403を返した場合にのみ、認証フックはトークンを削除してログイン画面へ移動する。通信障害や5xxではトークンを残してエラーを表示する。
-- 2026-09-11時点の最新コミットは `bdc14fc Refactor frontend authentication handling`。
+- 2026-09-15時点の最新コミットは `a21fb06 Add authorized student company messaging`。統合ログイン / 登録は目視確認前の未コミット変更。
 - 呼称変更: `Student` モデル、`students` テーブル、`/students` API、`studentApiToken` への移行済み。`/interns` と `internApiToken` の読込処理は互換用に一時的に残している。
 - 画面遷移・設計方針と実装差分（これからやること）は `docs/SCREEN_FLOW.md` にまとめている。

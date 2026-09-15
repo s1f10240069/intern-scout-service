@@ -16,7 +16,7 @@ export default function CompanyMessageThreadPage() {
     useAuthenticatedResource<Conversation>(
       "company",
       `/company/messages/${conversationId}`,
-      "/companies/login"
+      "/login?account_type=company"
     );
 
   const sendMessage = async (body: string) => {
@@ -32,7 +32,7 @@ export default function CompanyMessageThreadPage() {
     } catch (err) {
       if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
         clearToken("company");
-        router.replace("/companies/login");
+        router.replace("/login?account_type=company");
         throw new Error("ログインし直してください。");
       }
       if (err instanceof ApiError && err.status === 422) {

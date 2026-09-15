@@ -34,12 +34,12 @@
 「必須／任意」の二分ではなく、上から順に完成させる。各段階で動作確認できる状態を保ち、期限が来た時点で完成している範囲を提出対象とする。
 
 1. 学生の登録・ログイン・マイページ（完了）
-2. メッセージ実装前の最小限の基盤整理
+2. メッセージ実装前の最小限の基盤整理（完了）
    - `Intern` / `interns` を `Student` / `students` へ変更する
    - 企業側学生一覧を最終パス `/company/students` へ移す
    - この2点は、会話の外部キー、関連名、画面リンク、APIテストを後から作り直さないために先に行う
-3. 企業と学生のメッセージ
-4. 統合ログイン / 登録
+3. 企業と学生のメッセージ（完了）
+4. 統合ログイン / 登録（完了）
    - メッセージのモデル・関連付けには影響せず、後から変更しても主に認証画面と遷移先の修正で済むため後回しにする
 5. 企業の求人掲載
 6. 検索、大学サジェスト、お気に入りなどの追加機能
@@ -47,26 +47,6 @@
 ## 画面遷移
 
 ### 現状（実装済み）
-
-```mermaid
-flowchart TD
-    TOP["/ トップ"]
-
-    TOP -->|学生登録| INEW["/interns/new<br/>学生登録"]
-    TOP -->|ログイン| LOGIN["/login<br/>学生ログイン"]
-    TOP -->|企業登録| CNEW["/companies/new<br/>企業登録"]
-    TOP -->|企業ログイン| CLOGIN["/companies/login<br/>企業ログイン"]
-
-    INEW -->|登録成功（自動ログイン）| MYPAGE["/mypage<br/>学生マイページ"]
-    LOGIN -->|ログイン成功| MYPAGE
-    CNEW -->|登録成功（自動ログイン）| DASH["/company/students<br/>学生一覧"]
-    CLOGIN -->|ログイン成功| DASH
-
-    MYPAGE -->|ログアウト| LOGIN
-    DASH -->|ログアウト| CLOGIN
-```
-
-### 統合ログイン/登録 適用後
 
 ```mermaid
 flowchart TD
@@ -122,10 +102,10 @@ flowchart TD
 
 | 種別 | 現状 | 変更後（予定） | 備考 |
 |---|---|---|---|
-| 学生登録 | `/interns/new` | `/register` | 企業登録と統合 |
-| 企業登録 | `/companies/new` | `/register` | 学生登録と統合 |
-| 学生ログイン | `/login` | `/login` | 企業と統合（種別選択） |
-| 企業ログイン | `/companies/login` | 廃止 | `/login` へ統合 |
+| 学生登録 | `/register` | `/register` | 旧 `/interns/new` は一時リダイレクト |
+| 企業登録 | `/register` | `/register` | 旧 `/companies/new` は一時リダイレクト |
+| 学生ログイン | `/login` | `/login` | 種別選択で学生を指定 |
+| 企業ログイン | `/login` | `/login` | 旧 `/companies/login` は一時リダイレクト |
 | 学生マイページ | `/mypage` | `/mypage` | 変更なし |
 | 企業: 学生一覧 | `/company/students` | `/company/students` | 旧 `/companies/dashboard` は一時リダイレクト |
 | 学生: 企業一覧 | （なし） | `/companies` | 新規 |
@@ -145,6 +125,7 @@ flowchart TD
 | 学生一覧API | `GET /students`（旧 `/interns` も一時維持） | `GET /students` |
 | 学生詳細API | `GET /students/:id`（旧 `/interns/:id` も一時維持） | `GET /students/:id` |
 | 学生登録API | `POST /students`（旧 `/interns` も一時維持） | `POST /students` |
+| ログインAPI | `POST /login`（`account_type` で種別指定、旧 `/company_login` も一時維持） | `POST /login` |
 | 認証種別 | `student` | `student` |
 | トークンキー | `studentApiToken`（旧キー読込互換あり） | `studentApiToken` |
 | フロント型 | `Student` | `Student` |
@@ -161,7 +142,7 @@ flowchart TD
 | 学生: 会話一覧 | `/messages` |
 | 学生: 会話スレッド | `/messages/:conversation_id` |
 
-#### API案
+#### API
 
 | 操作者 | メソッド・パス | 用途 |
 |---|---|---|
@@ -240,11 +221,12 @@ flowchart TD
 2. バックエンドのリクエストテスト、フロントエンドのlint・build、主要画面の手動遷移を確認する
 3. 旧APIルート、旧画面リダイレクト、旧トークンキーのフォールバックは、切替完了後の別変更で削除する
 
-### 5. 統合ログイン / 登録（メッセージ完成後）
+### 5. 統合ログイン / 登録（完了）
 
-1. `account_type` 付きの新しい `/login` と `/register` を追加する
-2. 既存の `/company_login`、`/interns/new`、`/companies/new` は一時的に残し、新画面へ切り替える
-3. 新画面の動作確認後、旧画面をリダイレクトへ変更し、最後に旧APIを削除する
+1. `account_type` 付きの新しい `/login` と `/register` を追加済み
+2. 既存の `/company_login` は互換APIとして一時的に残している
+3. `/interns/new`、`/companies/new`、`/companies/login` は新画面へのリダイレクトへ変更済み
+4. 目視確認後、旧APIは他の互換処理とまとめて削除する
 
 ## 現在の実装とのズレ（差分 = これからやること）
 
@@ -275,14 +257,15 @@ flowchart TD
 - [x] 企業側: 学生詳細＋会話、会話一覧・スレッド
 - [x] 学生側: 会話一覧・スレッド（返信フォーム付き）
 
-### 統合ログイン/登録（メッセージ完成後）
+### 統合ログイン/登録（実装済み・互換期間中）
 
-- [ ] `/login` を種別選択（学生/企業）付きに改修（現状は学生専用）
-- [ ] `/register` を新設（種別選択で入力項目を切替）
-- [ ] `/interns/new`・`/companies/new` は新画面への切替後にリダイレクト化する
-- [ ] `/companies/login` は新画面への切替後に `/login` へリダイレクトする
-- [ ] API `POST /login` に `account_type` を追加し、移行期間後に `POST /company_login` を削除する
-- [ ] トップ `/` を「ログイン」「新規登録」の2リンクに簡素化
+- [x] `/login` を種別選択（学生/企業）付きに改修
+- [x] `/register` を新設（種別選択で入力項目を切替）
+- [x] `/interns/new`・`/companies/new` を `/register` へのリダイレクトに変更
+- [x] `/companies/login` を `/login` へのリダイレクトに変更
+- [x] API `POST /login` に `account_type` を追加
+- [ ] 移行期間後に `POST /company_login` を削除
+- [x] トップ `/` を「ログイン」「新規登録」の2リンクに簡素化
 
 ### 企業閲覧・求人（未着手）
 

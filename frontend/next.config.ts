@@ -8,6 +8,21 @@ const nextConfig: NextConfig = {
         destination: "/company/students",
         permanent: false,
       },
+      {
+        source: "/companies/login",
+        destination: "/login?account_type=company",
+        permanent: false,
+      },
+      {
+        source: "/interns/new",
+        destination: "/register?account_type=student",
+        permanent: false,
+      },
+      {
+        source: "/companies/new",
+        destination: "/register?account_type=company",
+        permanent: false,
+      },
     ];
   },
 };
