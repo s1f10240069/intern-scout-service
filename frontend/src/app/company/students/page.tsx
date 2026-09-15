@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { clearToken } from "@/lib/auth";
 import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource";
 import type { Student } from "@/lib/types";
@@ -25,6 +26,9 @@ export default function CompanyStudentsPage() {
   return (
     <main>
       <h1>学生一覧</h1>
+      <p>
+        <Link href="/company/messages">会話一覧を見る</Link>
+      </p>
       <table>
         <thead>
           <tr>
@@ -37,7 +41,9 @@ export default function CompanyStudentsPage() {
         <tbody>
           {students.map((student) => (
             <tr key={student.id}>
-              <td>{student.name}</td>
+              <td>
+                <Link href={`/company/students/${student.id}`}>{student.name}</Link>
+              </td>
               <td>{student.university}</td>
               <td>{student.graduation_year}</td>
               <td>{student.skills}</td>

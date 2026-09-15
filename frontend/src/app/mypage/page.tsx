@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { clearToken } from "@/lib/auth";
 import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource";
 import type { Student } from "@/lib/types";
@@ -37,6 +38,9 @@ export default function MyPage() {
         <dt>スキル</dt>
         <dd>{student.skills}</dd>
       </dl>
+      <p>
+        <Link href="/messages">メッセージを見る</Link>
+      </p>
       <button type="button" onClick={handleLogout}>
         ログアウト
       </button>

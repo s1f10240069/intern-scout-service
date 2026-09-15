@@ -55,5 +55,5 @@ export function useAuthenticatedResource<T>(
     };
   }, [kind, endpoint, loginPath, router]);
 
-  return { data, loading, error };
+  return { data, setData, loading, error };
 }
