@@ -12,7 +12,8 @@ Rails.application.routes.draw do
   post "login", to: "sessions#create"
   get "me", to: "sessions#show"
 
-  resources :companies, only: [ :create ]
+  resources :companies, only: [ :index, :show, :create ]
+  resources :jobs, only: [ :index, :show ], controller: :job_postings
 
   post "company_login", to: "company_sessions#create"
   get "company_me", to: "company_sessions#show"
@@ -22,6 +23,12 @@ Rails.application.routes.draw do
   get "company/messages", to: "company_messages#index"
   get "company/messages/:conversation_id", to: "company_messages#show"
   post "company/messages/:conversation_id/messages", to: "company_messages#reply"
+
+  get "company/jobs", to: "company_jobs#index"
+  post "company/jobs", to: "company_jobs#create"
+  get "company/jobs/:id", to: "company_jobs#show"
+  match "company/jobs/:id", to: "company_jobs#update", via: [ :patch, :put ]
+  delete "company/jobs/:id", to: "company_jobs#destroy"
 
   get "messages", to: "student_messages#index"
   get "messages/:conversation_id", to: "student_messages#show"

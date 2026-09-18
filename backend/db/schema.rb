@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_15_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_15_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,6 +33,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_100000) do
     t.index ["company_id", "student_id"], name: "index_conversations_on_company_id_and_student_id", unique: true
     t.index ["company_id"], name: "index_conversations_on_company_id"
     t.index ["student_id"], name: "index_conversations_on_student_id"
+  end
+
+  create_table "job_postings", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.string "compensation"
+    t.datetime "created_at", null: false
+    t.text "description", null: false
+    t.string "location"
+    t.string "period"
+    t.string "required_skills"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_job_postings_on_company_id"
+    t.check_constraint "char_length(btrim(description)) >= 1 AND char_length(btrim(description)) <= 10000", name: "job_postings_description_length_check"
+    t.check_constraint "char_length(btrim(title::text)) >= 1 AND char_length(btrim(title::text)) <= 200", name: "job_postings_title_length_check"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -62,5 +77,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_100000) do
 
   add_foreign_key "conversations", "companies", on_delete: :cascade
   add_foreign_key "conversations", "students", on_delete: :cascade
+  add_foreign_key "job_postings", "companies", on_delete: :cascade
   add_foreign_key "messages", "conversations", on_delete: :cascade
 end

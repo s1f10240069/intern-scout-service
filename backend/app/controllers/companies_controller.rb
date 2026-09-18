@@ -1,4 +1,20 @@
 class CompaniesController < ApplicationController
+  before_action :authenticate_student!, only: [ :index, :show ]
+
+  def index
+    render json: Company.order(:name)
+  end
+
+  def show
+    company = Company.includes(:job_postings).find(params[:id])
+    render json: {
+      company: company,
+      job_postings: company.job_postings.order(created_at: :desc).map { |job| job_posting_payload(job) }
+    }
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Company not found" }, status: :not_found
+  end
+
   def create
     company = Company.new(company_params)
 

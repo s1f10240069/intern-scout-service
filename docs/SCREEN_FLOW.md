@@ -41,7 +41,7 @@
 3. 企業と学生のメッセージ（完了）
 4. 統合ログイン / 登録（完了）
    - メッセージのモデル・関連付けには影響せず、後から変更しても主に認証画面と遷移先の修正で済むため後回しにする
-5. 企業の求人掲載
+5. 企業の求人掲載（実装済み・目視確認待ち）
 6. 検索、大学サジェスト、お気に入りなどの追加機能
 
 ## 画面遷移
@@ -79,7 +79,7 @@ flowchart TD
     MSGLIST -->|クリック| MSGTHREAD["/messages/:conversation_id<br/>スレッド + 返信"]
 ```
 
-### 企業閲覧・求人（将来・新規追加）
+### 企業閲覧・求人（実装済み・目視確認待ち）
 
 ```mermaid
 flowchart TD
@@ -267,15 +267,17 @@ flowchart TD
 - [ ] 移行期間後に `POST /company_login` を削除
 - [x] トップ `/` を「ログイン」「新規登録」の2リンクに簡素化
 
-### 企業閲覧・求人（未着手）
+### 企業閲覧・求人（実装済み・目視確認待ち）
 
-- [ ] `JobPosting`（求人）モデル + `job_postings` テーブルのマイグレーション（`Company` に紐づく）
-- [ ] 求人のフィールド:
+- [x] `JobPosting`（求人）モデル + `job_postings` テーブルのマイグレーション（`Company` に紐づく）
+- [x] 求人のフィールド:
   - 必須: `title`(string) / `description`(text)
   - 任意(null許容): `location`(string) / `compensation`(string) / `period`(string) / `required_skills`(string)
-- [ ] 企業一覧 API（`GET /companies`）、企業ホームページ API（`GET /companies/:id`）、求人 API（`GET/POST/PUT/DELETE /jobs`）
-- [ ] 学生側: 企業一覧・企業ホームページ・求人詳細画面
-- [ ] 企業側: 求人管理画面（投稿・一覧・編集）
+- [x] 学生向けAPI: 企業一覧・詳細（`GET /companies`・`GET /companies/:id`）、求人一覧・詳細（`GET /jobs`・`GET /jobs/:id`）
+- [x] 企業向けAPI: 求人一覧・詳細・作成・更新・削除（`/company/jobs`）
+- [x] 学生側: 企業一覧・企業ホームページ・求人一覧・求人詳細画面
+- [x] 企業側: 求人管理画面（投稿・一覧・編集・削除）
+- [x] リクエストテスト（アカウント種別、他社求人、入力不備、CRUD、学生閲覧）
 
 ### 大学サジェスト（未着手）
 

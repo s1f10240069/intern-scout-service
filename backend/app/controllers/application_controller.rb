@@ -40,4 +40,13 @@ class ApplicationController < ActionController::API
   def message_payload(message)
     message.as_json(only: [ :id, :sender_type, :body, :created_at ])
   end
+
+  def job_posting_payload(job_posting)
+    job_posting.as_json(
+      only: [
+        :id, :title, :description, :location, :compensation,
+        :period, :required_skills, :created_at, :updated_at
+      ]
+    ).merge(company: job_posting.company)
+  end
 end

@@ -1,6 +1,7 @@
 class Company < ApplicationRecord
   has_secure_password
   has_many :conversations, dependent: :destroy
+  has_many :job_postings, dependent: :destroy
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true

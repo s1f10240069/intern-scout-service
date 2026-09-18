@@ -28,3 +28,16 @@ export type Conversation = {
   created_at: string;
   updated_at: string;
 };
+
+export type JobPosting = {
+  id: number;
+  title: string;
+  description: string;
+  location: string | null;
+  compensation: string | null;
+  period: string | null;
+  required_skills: string | null;
+  company: Company;
+  created_at: string;
+  updated_at: string;
+};
