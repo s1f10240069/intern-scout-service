@@ -33,10 +33,8 @@
 
 - `Student` モデル(name, email, university, graduation_year, skills)
 - 登録API: `POST /students`、ログインAPI: `POST /login`、本人確認API: `GET /me`
-- 旧 `/interns` APIは移行期間中の互換ルートとして維持
 - 認証方式: `has_secure_password` でパスワードをハッシュ化して保存 + ログインごとにAPIトークンを再発行
 - 画面: `/register`(学生を選択して登録、登録後は自動ログイン) / `/login`(学生を選択) / `/mypage`
-- 旧 `/interns/new` は `/register?account_type=student` へリダイレクト
 
 ### 企業側
 
@@ -99,5 +97,5 @@
 - `json` gemを`~> 2.7`に固定(Rails最新版が入れた3.0系だとJSONボディのパースでエラーになったため)
 - `Student#as_json` / `Company#as_json` で `password_digest` / `api_token` をレスポンスから除外(漏洩防止)
 - 学生一覧・詳細は企業専用。ログイン中の学生本人には見せない(自分の情報は`/mypage`のみ)
-- 呼称変更: `Student` モデル、`students` テーブル、`/students` API、`studentApiToken` への移行済み。旧 `/interns` API・旧画面リダイレクト・旧トークンキー読込は互換用に一時維持。
+- 呼称は `Student` モデル、`students` テーブル、`/students` API、`studentApiToken` に統一済み。過去のDB migrationは履歴として維持する。
 - 画面遷移・設計方針と「決定済み方針」と「現実装」の差分は `docs/SCREEN_FLOW.md` にまとめている。

@@ -6,8 +6,6 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   resources :students, only: [ :index, :show, :create ]
-  # Temporary compatibility routes. Remove after every client uses /students.
-  resources :interns, only: [ :index, :show, :create ]
 
   post "login", to: "sessions#create"
   get "me", to: "sessions#show"

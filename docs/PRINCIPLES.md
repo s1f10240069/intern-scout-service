@@ -40,7 +40,7 @@
 
 メッセージの関連付け・画面リンク・テストを旧名称で作ると後の修正範囲が広がるため、次の2点だけは先に行う。
 
-- ドメイン識別子の呼称リネーム: `Intern` → `Student`、`interns` → `students`、`internApiToken` → `studentApiToken`
+- 学生のドメイン識別子は `Student`、`students`、`studentApiToken` に統一する
 - 企業側学生一覧のパス改称: `/companies/dashboard` → `/company/students`
 
 既存画面やAPIを一度に削除せず、新旧ルートの一時併存・リダイレクト・トークンキーのフォールバックを使って段階的に移行する。詳細は `docs/SCREEN_FLOW.md` の「安全な移行手順」を参照。

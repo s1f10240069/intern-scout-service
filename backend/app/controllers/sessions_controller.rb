@@ -2,7 +2,7 @@ class SessionsController < ApplicationController
   ACCOUNT_TYPES = %w[student company].freeze
 
   def create
-    account_type = params[:account_type].presence || "student"
+    account_type = params[:account_type].presence
     unless ACCOUNT_TYPES.include?(account_type)
       render json: { error: "アカウント種別が正しくありません" }, status: :unprocessable_entity
       return
@@ -30,8 +30,6 @@ class SessionsController < ApplicationController
   private
 
   def login_payload(account_type, account)
-    payload = { account_type: account_type, token: account.api_token, account_type.to_sym => account }
-    payload[:intern] = account if account_type == "student"
-    payload
+    { account_type: account_type, token: account.api_token, account_type.to_sym => account }
   end
 end

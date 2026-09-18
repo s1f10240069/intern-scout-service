@@ -20,7 +20,6 @@ Rails APIとNext.jsで作る、学生と企業をつなぐスカウトサービ�
 - 学生の登録、ログイン、マイページ
   - モデル: `Student`（`students` テーブル）
   - API: `POST /students`、`POST /login`、`GET /me`
-  - 互換API: `POST/GET /interns` は移行期間のみ維持
   - 画面: `/register`（学生選択）、`/login`（学生選択）、`/mypage`
 - 企業の登録、ログイン、学生一覧
   - API: `POST /companies`、`POST /login`（`account_type: company`）、`GET /company_me`
@@ -34,7 +33,7 @@ Rails APIとNext.jsで作る、学生と企業をつなぐスカウトサービ�
   - `password_digest`と`api_token`はAPIレスポンスへ出さない
 - フロントエンドの共通処理
   - `frontend/src/lib/api.ts`: JSON API通信、Authorizationヘッダー、`ApiError`
-  - `frontend/src/lib/auth.ts`: アカウント種別ごとのトークン管理。旧 `internApiToken` は初回読込時に `studentApiToken` へ移行
+  - `frontend/src/lib/auth.ts`: アカウント種別ごとのトークン管理
   - `frontend/src/lib/types.ts`: `Student` / `Company` の共通型
   - `frontend/src/hooks/useAuthenticatedResource.ts`: 認証済みページのデータ取得・認証切れ処理
 - フロントエンドの`lint`と本番`build`は成功済み
@@ -45,7 +44,7 @@ Rails APIとNext.jsで作る、学生と企業をつなぐスカウトサービ�
   - Rails統合テストで新旧学生APIとメッセージAPIを検証
 - 統合ログイン / 登録
   - `/login` と `/register` で学生・企業を選択
-  - 旧 `/interns/new`、`/companies/new`、`/companies/login` は新画面へリダイレクト
+  - 旧 `/companies/new`、`/companies/login` は新画面へリダイレクト
 - 求人掲載・閲覧（自動検証済み、目視確認待ち）
   - 企業: `/company/jobs` で作成・一覧・編集・削除
   - 学生: `/companies` で企業と掲載求人を閲覧、`/jobs` で求人一覧・詳細を閲覧
@@ -109,5 +108,5 @@ npm run dev
 - `backend/Gemfile`の`json` gemは`~> 2.7`に固定する。3.0系ではRailsのJSONリクエスト解析が失敗した経緯があるため、安易に更新しない。
 - APIが401または403を返した場合にのみ、認証フックはトークンを削除してログイン画面へ移動する。通信障害や5xxではトークンを残してエラーを表示する。
 - 2026-09-15時点の最新コミットは `9439f72 Unify student and company authentication pages`。求人機能は目視確認前の未コミット変更。
-- 呼称変更: `Student` モデル、`students` テーブル、`/students` API、`studentApiToken` への移行済み。`/interns` と `internApiToken` の読込処理は互換用に一時的に残している。
+- 呼称変更: `Student` モデル、`students` テーブル、`/students` API、`studentApiToken` に統一済み。過去のDB migrationは履歴として維持する。
 - 画面遷移・設計方針と実装差分（これからやること）は `docs/SCREEN_FLOW.md` にまとめている。

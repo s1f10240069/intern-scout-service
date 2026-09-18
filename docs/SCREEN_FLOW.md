@@ -102,7 +102,7 @@ flowchart TD
 
 | 種別 | 現状 | 変更後（予定） | 備考 |
 |---|---|---|---|
-| 学生登録 | `/register` | `/register` | 旧 `/interns/new` は一時リダイレクト |
+| 学生登録 | `/register` | `/register` | |
 | 企業登録 | `/register` | `/register` | 旧 `/companies/new` は一時リダイレクト |
 | 学生ログイン | `/login` | `/login` | 種別選択で学生を指定 |
 | 企業ログイン | `/login` | `/login` | 旧 `/companies/login` は一時リダイレクト |
@@ -122,9 +122,9 @@ flowchart TD
 |---|---|---|
 | モデル | `Student` | `Student` |
 | テーブル | `students` | `students` |
-| 学生一覧API | `GET /students`（旧 `/interns` も一時維持） | `GET /students` |
-| 学生詳細API | `GET /students/:id`（旧 `/interns/:id` も一時維持） | `GET /students/:id` |
-| 学生登録API | `POST /students`（旧 `/interns` も一時維持） | `POST /students` |
+| 学生一覧API | `GET /students` | `GET /students` |
+| 学生詳細API | `GET /students/:id` | `GET /students/:id` |
+| 学生登録API | `POST /students` | `POST /students` |
 | ログインAPI | `POST /login`（`account_type` で種別指定、旧 `/company_login` も一時維持） | `POST /login` |
 | 認証種別 | `student` | `student` |
 | トークンキー | `studentApiToken`（旧キー読込互換あり） | `studentApiToken` |
@@ -200,13 +200,12 @@ flowchart TD
 
 1. 既存のマイグレーションファイルは書き換えず、新しいマイグレーションで `interns` を `students` へ `rename_table` する
 2. 外部キー作成前にモデルを `Student`、コントローラーを `StudentsController` へ変更する
-3. 新しい `/students` APIを追加し、旧 `/interns` APIは同じ処理への互換ルートとして一時的に残す
-4. 新APIは `student` のリクエスト・レスポンス名を使い、旧APIは `intern` のリクエスト・レスポンス形式を維持する
+3. `/students` APIに統一し、リクエスト・レスポンス名も `student` を使う
 
 ### 2. フロントエンドの呼称・トークン移行
 
 1. 型、変数、API呼び出しを `Student` / `/students` へ切り替える
-2. `studentApiToken` を正式キーにする。読み込み時だけ旧 `internApiToken` へフォールバックし、見つかった値を新キーへ移して旧キーを削除する
+2. `studentApiToken` を学生用の保存キーとして使う
 3. 登録・ログイン・マイページ・学生一覧が新APIだけで動くことを確認する
 
 ### 3. 画面パスの移行
@@ -225,7 +224,7 @@ flowchart TD
 
 1. `account_type` 付きの新しい `/login` と `/register` を追加済み
 2. 既存の `/company_login` は互換APIとして一時的に残している
-3. `/interns/new`、`/companies/new`、`/companies/login` は新画面へのリダイレクトへ変更済み
+3. `/companies/new`、`/companies/login` は新画面へのリダイレクトへ変更済み
 4. 目視確認後、旧APIは他の互換処理とまとめて削除する
 
 ## 現在の実装とのズレ（差分 = これからやること）
@@ -235,11 +234,10 @@ flowchart TD
 ### 呼称変更（コード識別子のリネーム）
 
 - [x] `Intern` モデル → `Student`、テーブル `interns` → `students`（追加マイグレーションで安全に改称）
-- [x] `/students` ルートを追加（旧 `/interns` は互換用に一時維持）
-- [x] `StudentsController` を追加（旧 `InternsController` は互換API専用）
+- [x] `/students` ルートと `StudentsController` に統一
 - [x] `sessions_controller.rb` 内の `Intern` 参照 → `Student`
 - [x] `frontend/src/lib/types.ts` の `Intern` 型 → `Student`
-- [x] `frontend/src/lib/auth.ts` の `intern` / `internApiToken` → `student` / `studentApiToken`（旧キー自動移行あり）
+- [x] `frontend/src/lib/auth.ts` の学生用トークンキーを `studentApiToken` に統一
 - [x] `frontend/src/app/mypage/page.tsx`・`company/students/page.tsx` の `Student` 型参照
 - [x] `backend/db/seeds.rb` の `Intern` 参照 → `Student`
 
@@ -261,7 +259,7 @@ flowchart TD
 
 - [x] `/login` を種別選択（学生/企業）付きに改修
 - [x] `/register` を新設（種別選択で入力項目を切替）
-- [x] `/interns/new`・`/companies/new` を `/register` へのリダイレクトに変更
+- [x] `/companies/new` を `/register` へのリダイレクトに変更
 - [x] `/companies/login` を `/login` へのリダイレクトに変更
 - [x] API `POST /login` に `account_type` を追加
 - [ ] 移行期間後に `POST /company_login` を削除
