@@ -1,6 +1,6 @@
 # 画面遷移・設計方針と実装差分
 
-最終更新: 2026-09-15
+最終更新: 2026-09-19
 
 この文書は、画面遷移と設計方針をまとめ、**「決定済みの方針」と「現在の実装」の差分（これからやること）** を一覧化したものである。
 
@@ -41,7 +41,7 @@
 3. 企業と学生のメッセージ（完了）
 4. 統合ログイン / 登録（完了）
    - メッセージのモデル・関連付けには影響せず、後から変更しても主に認証画面と遷移先の修正で済むため後回しにする
-5. 企業の求人掲載（実装済み・目視確認待ち）
+5. 企業の求人掲載と学生による閲覧（実装済み・目視確認待ち）
 6. 検索、大学サジェスト、お気に入りなどの追加機能
 
 ## 画面遷移
@@ -86,7 +86,7 @@ flowchart TD
     MYPAGE["/mypage<br/>学生マイページ"]
 
     MYPAGE -->|企業を探す| COMPANIES["/companies<br/>企業一覧"]
-    MYPAGE -->|求人を探す| JOBS["/jobs<br/>求人一覧(検索・絞り込み)"]
+    MYPAGE -->|求人を探す| JOBS["/jobs<br/>求人一覧"]
     COMPANIES -->|企業を選ぶ| CHOME["/companies/:id<br/>企業ホームページ<br/>(プロフィール + 求人一覧)"]
     CHOME -->|求人を選ぶ| JOB["/jobs/:id<br/>求人詳細"]
     JOBS -->|求人を選ぶ| JOB
@@ -100,37 +100,37 @@ flowchart TD
 
 ### 画面パス
 
-| 種別 | 現状 | 変更後（予定） | 備考 |
+| 種別 | 旧パス | 現行パス | 備考 |
 |---|---|---|---|
 | 学生登録 | `/register` | `/register` | |
-| 企業登録 | `/register` | `/register` | 旧 `/companies/new` は一時リダイレクト |
+| 企業登録 | `/companies/new` | `/register` | 旧パスは一時リダイレクト |
 | 学生ログイン | `/login` | `/login` | 種別選択で学生を指定 |
-| 企業ログイン | `/login` | `/login` | 旧 `/companies/login` は一時リダイレクト |
+| 企業ログイン | `/companies/login` | `/login` | 旧パスは一時リダイレクト |
 | 学生マイページ | `/mypage` | `/mypage` | 変更なし |
-| 企業: 学生一覧 | `/company/students` | `/company/students` | 旧 `/companies/dashboard` は一時リダイレクト |
-| 学生: 企業一覧 | （なし） | `/companies` | 新規 |
-| 学生: 企業ホームページ | （なし） | `/companies/:id` | 新規 |
-| 学生: 求人一覧(検索) | （なし） | `/jobs` | 新規 |
-| 学生: 求人詳細 | （なし） | `/jobs/:id` | 新規 |
-| 学生: お気に入り一覧 | （なし） | `/favorites` | 新規 |
-| 企業: お気に入り学生一覧 | （なし） | `/company/favorites` | 新規 |
-| 企業: 求人管理 | （なし） | `/company/jobs` | 新規 |
+| 企業: 学生一覧 | `/companies/dashboard` | `/company/students` | 旧パスは一時リダイレクト |
+| 学生: 企業一覧 | （なし） | `/companies` | 実装済み |
+| 学生: 企業ホームページ | （なし） | `/companies/:id` | 実装済み |
+| 学生: 求人一覧 | （なし） | `/jobs` | 実装済み。検索・絞り込みは未実装 |
+| 学生: 求人詳細 | （なし） | `/jobs/:id` | 実装済み |
+| 学生: お気に入り一覧 | （なし） | （未実装） | 将来候補 |
+| 企業: お気に入り学生一覧 | （なし） | （未実装） | 将来候補 |
+| 企業: 求人管理 | （なし） | `/company/jobs` | 実装済み |
 
 ### APIパス / コード識別子
 
-| 種別 | 現状 | 変更後（予定） |
+| 種別 | 現行 | 備考 |
 |---|---|---|
-| モデル | `Student` | `Student` |
-| テーブル | `students` | `students` |
-| 学生一覧API | `GET /students` | `GET /students` |
-| 学生詳細API | `GET /students/:id` | `GET /students/:id` |
-| 学生登録API | `POST /students` | `POST /students` |
-| ログインAPI | `POST /login`（`account_type` で種別指定、旧 `/company_login` も一時維持） | `POST /login` |
-| 認証種別 | `student` | `student` |
-| トークンキー | `studentApiToken`（旧キー読込互換あり） | `studentApiToken` |
-| フロント型 | `Student` | `Student` |
-| 求人モデル | （なし） | `JobPosting` |
-| 求人テーブル | （なし） | `job_postings` |
+| モデル | `Student` | 旧 `Intern` から改称済み |
+| テーブル | `students` | 旧 `interns` から改称済み |
+| 学生一覧API | `GET /students` | 企業ログイン必須 |
+| 学生詳細API | `GET /students/:id` | 企業ログイン必須 |
+| 学生登録API | `POST /students` | |
+| ログインAPI | `POST /login` | `account_type` で種別指定。旧 `/company_login` は一時維持 |
+| 認証種別 | `student` / `company` | アカウント種別ごとにトークンを分離 |
+| トークンキー | `studentApiToken` / `companyApiToken` | 旧キー読込互換あり |
+| フロント型 | `Student` / `Company` | |
+| 求人モデル | `JobPosting` | |
+| 求人テーブル | `job_postings` | |
 
 ### メッセージ機能（実装済み）
 

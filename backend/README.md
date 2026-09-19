@@ -1,24 +1,13 @@
-# README
+# Backend
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+学生スカウトサービスのRails APIです。Docker Composeによるデータベース準備を含む起動方法、テスト用アカウント、設計上の判断は[ルートREADME](../README.md)を参照してください。
 
-Things you may want to cover:
+## テスト
 
-* Ruby version
+リポジトリのルートでコンテナを起動した状態で実行します。
 
-* System dependencies
+```bash
+docker compose exec backend bin/rails test
+```
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+APIの画面・ルート・認可設計の詳細は[画面遷移・実装差分](../docs/SCREEN_FLOW.md)に記載しています。
