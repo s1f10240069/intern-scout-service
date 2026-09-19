@@ -11,5 +11,9 @@ export default function LogoutButton({ role }: { role: "student" | "company" }) 
     router.push(role === "company" ? "/login?account_type=company" : "/login");
   };
 
-  return <Button variant="ghost" className="header-logout" onClick={handleLogout}>ログアウト</Button>;
+  return (
+    <Button variant="ghost" className="header-logout" onClick={handleLogout}>
+      ログアウト
+    </Button>
+  );
 }

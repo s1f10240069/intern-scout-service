@@ -1,5 +1,4 @@
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001";
 
 export class ApiError extends Error {
   status: number;
@@ -18,10 +17,7 @@ type ApiFetchOptions = {
   token?: string;
 };
 
-export async function apiFetch<T>(
-  path: string,
-  options: ApiFetchOptions = {}
-): Promise<T> {
+export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
   const headers: Record<string, string> = {};
   if (options.body !== undefined) headers["Content-Type"] = "application/json";
   if (options.token) headers.Authorization = `Bearer ${options.token}`;
@@ -33,9 +29,7 @@ export async function apiFetch<T>(
   });
 
   const contentType = res.headers.get("content-type") ?? "";
-  const data = contentType.includes("application/json")
-    ? await res.json()
-    : await res.text();
+  const data = contentType.includes("application/json") ? await res.json() : await res.text();
 
   if (!res.ok) {
     throw new ApiError(res.status, data);

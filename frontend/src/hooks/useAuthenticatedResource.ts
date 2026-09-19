@@ -10,11 +10,7 @@ import { ApiError, apiFetch } from "@/lib/api";
 // redirects to `loginPath` if there's no token or the API rejects it
 // (expired/invalid token). Used by any page that only authenticated
 // students/companies may see (mypage, student list, message threads, ...).
-export function useAuthenticatedResource<T>(
-  kind: AuthKind,
-  endpoint: string,
-  loginPath: string
-) {
+export function useAuthenticatedResource<T>(kind: AuthKind, endpoint: string, loginPath: string) {
   const router = useRouter();
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);

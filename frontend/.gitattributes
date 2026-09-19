@@ -1,0 +1,2 @@
+# Keep frontend source files consistent across Windows, macOS, and Linux.
+* text=auto eol=lf

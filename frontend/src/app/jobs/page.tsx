@@ -1,3 +1,49 @@
 "use client";
-import Link from "next/link"; import { AppShell, PageHeading } from "@/components/AppShell"; import { Badge } from "@/components/ui"; import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource"; import type { JobPosting } from "@/lib/types";
-export default function JobsPage(){const {data:jobs,loading,error}=useAuthenticatedResource<JobPosting[]>("student","/jobs","/login");return <AppShell role="student">{loading?<div className="state-card"><span className="spinner" />読み込み中...</div>:error?<div className="state-card state-card--error">{error}</div>:<><PageHeading eyebrow="Job postings" title="求人を探す" description="あなたの興味やスキルに合う、インターンの募集を見つけましょう。" />{!jobs?.length?<div className="empty-state">掲載中の求人はまだありません。</div>:<div className="list-grid">{jobs.map(job=><Link className="list-card" key={job.id} href={`/jobs/${job.id}`}><h2>{job.title}</h2><p>{job.company.name}</p><div className="list-card__footer"><span>{job.location&&<Badge>{job.location}</Badge>}</span><span>詳細を見る →</span></div></Link>)}</div>}</>}</AppShell>}
+import Link from "next/link";
+import { AppShell, PageHeading } from "@/components/AppShell";
+import { Badge } from "@/components/ui";
+import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource";
+import type { JobPosting } from "@/lib/types";
+export default function JobsPage() {
+  const {
+    data: jobs,
+    loading,
+    error,
+  } = useAuthenticatedResource<JobPosting[]>("student", "/jobs", "/login");
+  return (
+    <AppShell role="student">
+      {loading ? (
+        <div className="state-card">
+          <span className="spinner" />
+          読み込み中...
+        </div>
+      ) : error ? (
+        <div className="state-card state-card--error">{error}</div>
+      ) : (
+        <>
+          <PageHeading
+            eyebrow="Job postings"
+            title="求人を探す"
+            description="あなたの興味やスキルに合う、インターンの募集を見つけましょう。"
+          />
+          {!jobs?.length ? (
+            <div className="empty-state">掲載中の求人はまだありません。</div>
+          ) : (
+            <div className="list-grid">
+              {jobs.map((job) => (
+                <Link className="list-card" key={job.id} href={`/jobs/${job.id}`}>
+                  <h2>{job.title}</h2>
+                  <p>{job.company.name}</p>
+                  <div className="list-card__footer">
+                    <span>{job.location && <Badge>{job.location}</Badge>}</span>
+                    <span>詳細を見る →</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </AppShell>
+  );
+}

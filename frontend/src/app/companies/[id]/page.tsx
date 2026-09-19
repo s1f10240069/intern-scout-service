@@ -1,3 +1,56 @@
 "use client";
-import Link from "next/link"; import { useParams } from "next/navigation"; import { AppShell,BackLink,PageHeading } from "@/components/AppShell"; import { Badge } from "@/components/ui"; import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource"; import type { Company,JobPosting } from "@/lib/types";
-type CompanyDetail={company:Company;job_postings:JobPosting[]}; export default function CompanyDetailPage(){const {id}=useParams<{id:string}>();const {data,loading,error}=useAuthenticatedResource<CompanyDetail>("student",`/companies/${id}`,"/login");return <AppShell role="student">{loading?<div className="state-card"><span className="spinner" />読み込み中...</div>:error?<div className="state-card state-card--error">{error}</div>:data&&<><BackLink href="/companies">企業一覧へ戻る</BackLink><PageHeading eyebrow="Company" title={data.company.name} description={data.company.email} /><h2 style={{margin:"0 0 16px"}}>掲載中の求人</h2>{!data.job_postings.length?<div className="empty-state">掲載中の求人はありません。</div>:<div className="list-grid">{data.job_postings.map(job=><Link className="list-card" key={job.id} href={`/jobs/${job.id}`}><h2>{job.title}</h2><p>{job.description}</p><div className="list-card__footer"><span>{job.location&&<Badge>{job.location}</Badge>}</span><span>詳細を見る →</span></div></Link>)}</div>}</>}</AppShell>}
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { AppShell, BackLink, PageHeading } from "@/components/AppShell";
+import { Badge } from "@/components/ui";
+import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource";
+import type { Company, JobPosting } from "@/lib/types";
+type CompanyDetail = { company: Company; job_postings: JobPosting[] };
+export default function CompanyDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const { data, loading, error } = useAuthenticatedResource<CompanyDetail>(
+    "student",
+    `/companies/${id}`,
+    "/login"
+  );
+  return (
+    <AppShell role="student">
+      {loading ? (
+        <div className="state-card">
+          <span className="spinner" />
+          読み込み中...
+        </div>
+      ) : error ? (
+        <div className="state-card state-card--error">{error}</div>
+      ) : (
+        data && (
+          <>
+            <BackLink href="/companies">企業一覧へ戻る</BackLink>
+            <PageHeading
+              eyebrow="Company"
+              title={data.company.name}
+              description={data.company.email}
+            />
+            <h2 style={{ margin: "0 0 16px" }}>掲載中の求人</h2>
+            {!data.job_postings.length ? (
+              <div className="empty-state">掲載中の求人はありません。</div>
+            ) : (
+              <div className="list-grid">
+                {data.job_postings.map((job) => (
+                  <Link className="list-card" key={job.id} href={`/jobs/${job.id}`}>
+                    <h2>{job.title}</h2>
+                    <p>{job.description}</p>
+                    <div className="list-card__footer">
+                      <span>{job.location && <Badge>{job.location}</Badge>}</span>
+                      <span>詳細を見る →</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
+        )
+      )}
+    </AppShell>
+  );
+}

@@ -1,3 +1,90 @@
 "use client";
-import { useState } from "react"; import Link from "next/link"; import { useRouter } from "next/navigation"; import { AppShell, PageHeading } from "@/components/AppShell"; import { Button, ButtonLink } from "@/components/ui"; import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource"; import { apiFetch, ApiError } from "@/lib/api"; import { clearToken,getToken } from "@/lib/auth"; import type { JobPosting } from "@/lib/types";
-export default function CompanyJobsPage(){const router=useRouter();const {data:jobs,setData,loading,error}=useAuthenticatedResource<JobPosting[]>("company","/company/jobs","/login?account_type=company");const [deleteError,setDeleteError]=useState<string|null>(null);const remove=async(job:JobPosting)=>{if(!window.confirm(`「${job.title}」を削除しますか？`))return;const token=getToken("company");if(!token){router.replace("/login?account_type=company");return}try{await apiFetch<void>(`/company/jobs/${job.id}`,{method:"DELETE",token});setData(current=>current?.filter(item=>item.id!==job.id)??null);setDeleteError(null)}catch(err){if(err instanceof ApiError&&(err.status===401||err.status===403)){clearToken("company");router.replace("/login?account_type=company");return}setDeleteError("求人を削除できませんでした。")}};return <AppShell role="company">{loading?<div className="state-card"><span className="spinner" />読み込み中...</div>:error?<div className="state-card state-card--error">{error}</div>:<><PageHeading eyebrow="Job management" title="求人管理" description="公開中の求人を作成・更新できます。" action={<ButtonLink href="/company/jobs/new">求人を新規作成</ButtonLink>} />{deleteError&&<p className="form-error">{deleteError}</p>}{!jobs?.length?<div className="empty-state">求人はまだありません。まずは最初の求人を作成しましょう。</div>:<div className="list-grid">{jobs.map(job=><div className="list-card" key={job.id}><Link href={`/company/jobs/${job.id}`}><h2>{job.title}</h2><p>{job.location ?? "勤務地未設定"}</p></Link><div className="form-actions"><ButtonLink href={`/company/jobs/${job.id}`} variant="secondary">編集</ButtonLink><Button variant="danger" onClick={()=>void remove(job)}>削除</Button></div></div>)}</div>}</>}</AppShell>}
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AppShell, PageHeading } from "@/components/AppShell";
+import { Button, ButtonLink } from "@/components/ui";
+import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource";
+import { apiFetch, ApiError } from "@/lib/api";
+import { clearToken, getToken } from "@/lib/auth";
+import type { JobPosting } from "@/lib/types";
+export default function CompanyJobsPage() {
+  const router = useRouter();
+  const {
+    data: jobs,
+    setData,
+    loading,
+    error,
+  } = useAuthenticatedResource<JobPosting[]>(
+    "company",
+    "/company/jobs",
+    "/login?account_type=company"
+  );
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const remove = async (job: JobPosting) => {
+    if (!window.confirm(`「${job.title}」を削除しますか？`)) return;
+    const token = getToken("company");
+    if (!token) {
+      router.replace("/login?account_type=company");
+      return;
+    }
+    try {
+      await apiFetch<void>(`/company/jobs/${job.id}`, { method: "DELETE", token });
+      setData((current) => current?.filter((item) => item.id !== job.id) ?? null);
+      setDeleteError(null);
+    } catch (err) {
+      if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+        clearToken("company");
+        router.replace("/login?account_type=company");
+        return;
+      }
+      setDeleteError("求人を削除できませんでした。");
+    }
+  };
+  return (
+    <AppShell role="company">
+      {loading ? (
+        <div className="state-card">
+          <span className="spinner" />
+          読み込み中...
+        </div>
+      ) : error ? (
+        <div className="state-card state-card--error">{error}</div>
+      ) : (
+        <>
+          <PageHeading
+            eyebrow="Job management"
+            title="求人管理"
+            description="公開中の求人を作成・更新できます。"
+            action={<ButtonLink href="/company/jobs/new">求人を新規作成</ButtonLink>}
+          />
+          {deleteError && <p className="form-error">{deleteError}</p>}
+          {!jobs?.length ? (
+            <div className="empty-state">
+              求人はまだありません。まずは最初の求人を作成しましょう。
+            </div>
+          ) : (
+            <div className="list-grid">
+              {jobs.map((job) => (
+                <div className="list-card" key={job.id}>
+                  <Link href={`/company/jobs/${job.id}`}>
+                    <h2>{job.title}</h2>
+                    <p>{job.location ?? "勤務地未設定"}</p>
+                  </Link>
+                  <div className="form-actions">
+                    <ButtonLink href={`/company/jobs/${job.id}`} variant="secondary">
+                      編集
+                    </ButtonLink>
+                    <Button variant="danger" onClick={() => void remove(job)}>
+                      削除
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </AppShell>
+  );
+}

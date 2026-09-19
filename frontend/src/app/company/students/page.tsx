@@ -1,3 +1,60 @@
 "use client";
-import Link from "next/link"; import { AppShell, PageHeading } from "@/components/AppShell"; import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource"; import type { Student } from "@/lib/types";
-export default function CompanyStudentsPage(){const {data:students,loading,error}=useAuthenticatedResource<Student[]>("company","/students","/login?account_type=company");return <AppShell role="company">{loading?<div className="state-card"><span className="spinner" />読み込み中...</div>:error?<div className="state-card state-card--error">{error}</div>:<><PageHeading eyebrow="Company dashboard" title="学生を探す" description="プロフィールを確認して、気になる学生にメッセージを送れます。" />{!students?.length?<div className="empty-state">登録されている学生はまだありません。</div>:<div className="data-table-wrap"><table className="data-table"><thead><tr><th>名前</th><th>大学・学部</th><th>卒業予定年</th><th>スキル</th></tr></thead><tbody>{students.map(student=><tr key={student.id}><td><Link href={`/company/students/${student.id}`}>{student.name}</Link></td><td>{student.university ?? "—"}</td><td>{student.graduation_year ? `${student.graduation_year}年` : "—"}</td><td>{student.skills ?? "—"}</td></tr>)}</tbody></table></div>}</>}</AppShell>}
+import Link from "next/link";
+import { AppShell, PageHeading } from "@/components/AppShell";
+import { useAuthenticatedResource } from "@/hooks/useAuthenticatedResource";
+import type { Student } from "@/lib/types";
+export default function CompanyStudentsPage() {
+  const {
+    data: students,
+    loading,
+    error,
+  } = useAuthenticatedResource<Student[]>("company", "/students", "/login?account_type=company");
+  return (
+    <AppShell role="company">
+      {loading ? (
+        <div className="state-card">
+          <span className="spinner" />
+          読み込み中...
+        </div>
+      ) : error ? (
+        <div className="state-card state-card--error">{error}</div>
+      ) : (
+        <>
+          <PageHeading
+            eyebrow="Company dashboard"
+            title="学生を探す"
+            description="プロフィールを確認して、気になる学生にメッセージを送れます。"
+          />
+          {!students?.length ? (
+            <div className="empty-state">登録されている学生はまだありません。</div>
+          ) : (
+            <div className="data-table-wrap">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>名前</th>
+                    <th>大学・学部</th>
+                    <th>卒業予定年</th>
+                    <th>スキル</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {students.map((student) => (
+                    <tr key={student.id}>
+                      <td>
+                        <Link href={`/company/students/${student.id}`}>{student.name}</Link>
+                      </td>
+                      <td>{student.university ?? "—"}</td>
+                      <td>{student.graduation_year ? `${student.graduation_year}年` : "—"}</td>
+                      <td>{student.skills ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
+    </AppShell>
+  );
+}
